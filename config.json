@@ -63,8 +63,7 @@
         "network": "ws",
         "security": "none",
         "wsSettings": {
-          "path": "/ws-cazar-gate",
-          "heartbeatPeriod": 20
+          "path": "/ws-cazar-gate"
         },
         "sockopt": {
           "tcpNoDelay": true,
@@ -104,19 +103,10 @@
         "xhttpSettings": {
           "path": "/xh-cazar-gate",
           "mode": "auto",
-          "xPaddingBytes": "200-1200",
-          "noSSEHeader": false,
+          "xPaddingBytes": "100-1500",
           "scMaxEachPostBytes": 1000000,
           "scMaxBufferedPosts": 64,
-          "scStreamUpServerSecs": "20-80",
-          "xmux": {
-            "maxConcurrency": 0,
-            "maxConnections": 0,
-            "cMaxReuseTimes": "300-600",
-            "hMaxRequestTimes": "1000-2000",
-            "hMaxReusableSecs": "300-900",
-            "hKeepAlivePeriod": 20
-          }
+          "scStreamUpServerSecs": "20-80"
         },
         "sockopt": {
           "tcpNoDelay": true,
