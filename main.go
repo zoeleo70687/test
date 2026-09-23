@@ -97,7 +97,6 @@ func attachReverseProxy(backend *url.URL, name string) *httputil.ReverseProxy {
 		}
 		resp.Header.Set("X-Accel-Buffering", "no")
 		resp.Header.Set("Cache-Control", "no-store")
-		resp.Header.Del("Content-Length")
 		return nil
 	}
 	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
