@@ -1,0 +1,247 @@
+{
+  "log": {
+    "loglevel": "warning",
+    "dnsLog": false
+  },
+  "dns": {
+    "servers": [
+      "8.8.8.8",
+      "1.1.1.1",
+      "2001:4860:4860::8888",
+      "2606:4700:4700::1111",
+      "https://dns.google/dns-query"
+    ],
+    "queryStrategy": "UseIP",
+    "disableCache": false
+  },
+  "policy": {
+    "levels": {
+      "0": {
+        "handshake": 8,
+        "connIdle": 300,
+        "uplinkOnly": 2,
+        "downlinkOnly": 4,
+        "bufferSize": 1024
+      },
+      "1": {
+        "handshake": 8,
+        "connIdle": 300,
+        "uplinkOnly": 2,
+        "downlinkOnly": 4,
+        "bufferSize": 2048
+      }
+    },
+    "system": {
+      "statsInboundUplink": false,
+      "statsInboundDownlink": false,
+      "statsOutboundUplink": false,
+      "statsOutboundDownlink": false
+    }
+  },
+  "inbounds": [
+    {
+      "tag": "vless-ws-in",
+      "listen": "127.0.0.1",
+      "port": 8081,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "24c8b9d5-4e71-4a8e-a96c-13d8a5726201",
+            "level": 0,
+            "email": "normal@cazar"
+          },
+          {
+            "id": "e7f2b1c4-9a3d-4c5e-8b6f-7123d4e5f602",
+            "level": 1,
+            "email": "ai@cazar"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "none",
+        "wsSettings": {
+          "path": "/ws-cazar-gate",
+          "heartbeatPeriod": 20
+        },
+        "sockopt": {
+          "tcpNoDelay": true,
+          "tcpKeepAliveIdle": 15,
+          "tcpKeepAliveInterval": 15
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls", "quic"],
+        "routeOnly": true
+      }
+    },
+    {
+      "tag": "vless-xhttp-in",
+      "listen": "127.0.0.1",
+      "port": 8082,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "24c8b9d5-4e71-4a8e-a96c-13d8a5726201",
+            "level": 0,
+            "email": "normal@cazar"
+          },
+          {
+            "id": "e7f2b1c4-9a3d-4c5e-8b6f-7123d4e5f602",
+            "level": 1,
+            "email": "ai@cazar"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "none",
+        "xhttpSettings": {
+          "path": "/xh-cazar-gate",
+          "mode": "auto",
+          "xPaddingBytes": "200-1200",
+          "noSSEHeader": false,
+          "scMaxEachPostBytes": 1000000,
+          "scMaxBufferedPosts": 64,
+          "scStreamUpServerSecs": "20-80",
+          "xmux": {
+            "maxConcurrency": 0,
+            "maxConnections": 0,
+            "cMaxReuseTimes": "300-600",
+            "hMaxRequestTimes": "1000-2000",
+            "hMaxReusableSecs": "300-900",
+            "hKeepAlivePeriod": 20
+          }
+        },
+        "sockopt": {
+          "tcpNoDelay": true,
+          "tcpKeepAliveIdle": 15,
+          "tcpKeepAliveInterval": 15
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls", "quic"],
+        "routeOnly": true
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "direct-normal",
+      "protocol": "freedom",
+      "settings": {},
+      "streamSettings": {
+        "sockopt": {
+          "domainStrategy": "UseIPv4",
+          "tcpFastOpen": true,
+          "tcpcongestion": "bbr",
+          "tcpNoDelay": true,
+          "tcpMaxSeg": 1460,
+          "tcpKeepAliveIdle": 45,
+          "tcpKeepAliveInterval": 45
+        }
+      }
+    },
+    {
+      "tag": "direct-ai",
+      "protocol": "freedom",
+      "settings": {},
+      "streamSettings": {
+        "sockopt": {
+          "domainStrategy": "UseIP",
+          "happyEyeballs": {
+            "tryDelayMs": 250,
+            "prioritizeIPv6": true,
+            "interleave": 1,
+            "maxConcurrentTry": 4
+          },
+          "tcpFastOpen": true,
+          "tcpcongestion": "bbr",
+          "tcpNoDelay": true,
+          "tcpMaxSeg": 1460,
+          "tcpKeepAliveIdle": 45,
+          "tcpKeepAliveInterval": 45
+        }
+      }
+    },
+    {
+      "tag": "block",
+      "protocol": "blackhole",
+      "settings": {
+        "response": {
+          "type": "none"
+        }
+      }
+    }
+  ],
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",
+        "ip": [
+          "geoip:private",
+          "0.0.0.0/8",
+          "10.0.0.0/8",
+          "100.64.0.0/10",
+          "127.0.0.0/8",
+          "169.254.0.0/16",
+          "172.16.0.0/12",
+          "192.0.0.0/24",
+          "192.0.2.0/24",
+          "192.168.0.0/16",
+          "198.18.0.0/15",
+          "198.51.100.0/24",
+          "203.0.113.0/24",
+          "224.0.0.0/4",
+          "240.0.0.0/4",
+          "::1/128",
+          "100::/64",
+          "2001:db8::/32",
+          "fc00::/7",
+          "fe80::/10",
+          "ff00::/8"
+        ],
+        "outboundTag": "block"
+      },
+      {
+        "type": "field",
+        "user": ["ai@cazar"],
+        "outboundTag": "direct-ai"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "domain:openai.com",
+          "domain:chatgpt.com",
+          "domain:oaistatic.com",
+          "domain:oaiusercontent.com",
+          "domain:anthropic.com",
+          "domain:claude.ai",
+          "domain:claudeusercontent.com",
+          "domain:gemini.google.com",
+          "domain:generativelanguage.googleapis.com",
+          "domain:openaiapi-site.azureedge.net",
+          "domain:auth0.com",
+          "domain:sora.com",
+          "domain:grok.com",
+          "domain:x.ai",
+          "domain:deepseek.com",
+          "domain:perplexity.ai"
+        ],
+        "outboundTag": "direct-ai"
+      },
+      {
+        "type": "field",
+        "port": "0-65535",
+        "outboundTag": "direct-normal"
+      }
+    ]
+  }
+}
